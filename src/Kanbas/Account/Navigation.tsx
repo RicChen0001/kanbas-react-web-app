@@ -25,9 +25,13 @@
 //     </div>
 //   );
 // }
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function AccountNavigation() {
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
+  const { pathname } = useLocation();
   return (
     <div
       style={{
@@ -39,14 +43,14 @@ export default function AccountNavigation() {
       <Link
         to="/Kanbas/Account/Signin"
         className="list-group-item list-group-item-action text-danger"
-        style={{ marginBottom: '15px' }} // Add space between the items
+        style={{ marginBottom: '15px' }}
       >
         Signin
       </Link>
       <Link
         to="/Kanbas/Account/Signup"
         className="list-group-item list-group-item-action text-danger"
-        style={{ marginBottom: '15px' }} // Add space between the items
+        style={{ marginBottom: '15px' }}
       >
         Signup
       </Link>

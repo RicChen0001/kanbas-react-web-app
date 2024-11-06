@@ -1,9 +1,53 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
 
 const AssignmentEditor = () => {
+  const { courseId, assignmentId } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Get existing assignment if editing
+  const assignment = useSelector((state: any) => 
+    state.assignmentsReducer.assignments.find(
+      (a: any) => a._id === assignmentId
+    )
+  );
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = {
+      title: (document.getElementById("wd-name") as HTMLInputElement).value,
+      description: (document.getElementById("wd-description") as HTMLTextAreaElement).value,
+      points: parseInt((document.getElementById("wd-points") as HTMLInputElement).value),
+      dueDate: (document.getElementById("wd-due-date") as HTMLInputElement).value,
+      availableFromDate: (document.getElementById("wd-available-from") as HTMLInputElement).value,
+      availableUntilDate: (document.getElementById("wd-available-until") as HTMLInputElement).value,
+      _id: assignmentId || new Date().getTime().toString(),
+      course: courseId
+    };
+
+    if (assignmentId) {
+      dispatch(updateAssignment(formData));
+    } else {
+      dispatch(addAssignment(formData));
+    }
+    navigate(`/Kanbas/Courses/${courseId}/Assignments`);
+  };
+
+  // Pre-fill form if editing
+  useEffect(() => {
+    if (assignment) {
+      (document.getElementById("wd-name") as HTMLInputElement).value = assignment.title;
+      (document.getElementById("wd-description") as HTMLTextAreaElement).value = assignment.description;
+      // ... set other fields ...
+    }
+  }, [assignment]);
+
   return (
     <div className="container mt-4">
-      <form id="wd-assignments-editor">
+      <form id="wd-assignments-editor" onSubmit={handleSubmit}>
         {/* Assignment Name */}
         <div className="mb-3">
           <label htmlFor="wd-name" className="form-label">
@@ -243,6 +287,7 @@ The Kanbas application should include a link to navigate back to the landing pag
           <button
             type="button"
             className="btn btn-secondary me-2"
+            onClick={() => navigate(`/Kanbas/Courses/${courseId}/Assignments`)}
           >
             Cancel
           </button>

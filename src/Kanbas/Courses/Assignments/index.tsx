@@ -1,161 +1,100 @@
-// import React from 'react';
-// import { FaCheckCircle, FaEllipsisV, FaRegFileAlt } from 'react-icons/fa';
-// import { BsGripVertical } from "react-icons/bs";
-// import AssignmentsControls from './AssignmentsControls';
-// import AssignmentSearchControls from './SearchControls';
-// import TitleControlButtons from './TitleControlButtons';
-
-
-// export default function Assignments() {
-//   return (
-//     <div className="p-4">
-//       <div className="d-flex justify-content-between align-items-center mb-3">
-//         <AssignmentSearchControls />
-//         <AssignmentsControls />
-//       </div>
-//       <div className="d-flex justify-content-between align-items-center mb-3 bg-light p-4 rounded">
-//         <h4 className="mb-0">
-//           <BsGripVertical className="me-2" />
-//           ASSIGNMENTS
-//         </h4>
-//         <TitleControlButtons />
-//       </div>
-//         <li className="list-group-item border-0 border-start border-success border-4 ps-0 mb-3">
-//           <div className="d-flex align-items-center">
-//             <BsGripVertical className="me-2" />
-//             <FaRegFileAlt className="me-2 text-success" />
-//             <div className="flex-grow-1">
-//               <h6 className="mb-0">
-//               <a className="wd-assignment-link"
-//                 href="#/Kanbas/Courses/1234/Assignments/123">
-//                 A1
-//               </a>
-//               </h6>
-//               <small>
-//                 <span className="text-danger">Multiple Modules</span>
-//                 <span className="text-muted"> | Due May 19 at 11:59pm Sep 19 at 11:59pm | -/100 pts  |  Not Yet Graded</span>
-//               </small>
-//             </div>
-//             <div>
-//               <FaCheckCircle className="text-success me-2" />
-//               <FaEllipsisV />
-//             </div>
-//           </div>
-//         </li>
-//         <li className="list-group-item border-0 border-start border-success border-4 ps-0 mb-3">
-//           <div className="d-flex align-items-center">
-//             <BsGripVertical className="me-2" />
-//             <FaRegFileAlt className="me-2 text-success" />
-//             <div className="flex-grow-1">
-//               <h6 className="mb-0">
-//                 <a className="wd-assignment-link"
-//                   href="#/Kanbas/Courses/1234/Assignments/123">
-//                   A2
-//                 </a>
-//               </h6>
-//               <small>
-//               <span className="text-danger">Multiple Modules</span>
-//               <span className="text-muted"> | Due May 3 at 11:59pm Oct 3 at 11:59pm | -/100 pts</span>
-//               </small>
-//             </div>
-//             <div>
-//               <FaCheckCircle className="text-success me-2" />
-//               <FaEllipsisV />
-//             </div>
-//           </div>
-//         </li>
-//         <li className="list-group-item border-0 border-start border-success border-4 ps-0 mb-3">
-//           <div className="d-flex align-items-center">
-//             <BsGripVertical className="me-2" />
-//             <FaRegFileAlt className="me-2 text-success" />
-//             <div className="flex-grow-1">
-//               <h6 className="mb-0">
-//                 <a className="wd-assignment-link"
-//                   href="#/Kanbas/Courses/1234/Assignments/123">
-//                   A3
-//                 </a>
-//               </h6>
-//               <small>
-//               <span className="text-danger">Multiple Modules</span>
-//               <span className="text-muted"> | May Oct 17 at 11:59pm Oct 17 at 11:59pm | -/100 pts</span>
-//               </small>
-//             </div>
-//             <div>
-//               <FaCheckCircle className="text-success me-2" />
-//               <FaEllipsisV />
-//             </div>
-//           </div>
-//         </li>
-//     </div>
-//   );
-// }
-
-
 import React from 'react';
-import { FaCheckCircle, FaEllipsisV, FaRegFileAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaEllipsisV, FaRegFileAlt, FaTrash } from 'react-icons/fa';
 import { BsGripVertical } from "react-icons/bs";
 import AssignmentsControls from './AssignmentsControls';
 import AssignmentSearchControls from './SearchControls';
 import TitleControlButtons from './TitleControlButtons';
 import { useParams, Link } from 'react-router-dom';
 import * as db from "../../Database";
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteAssignment } from './reducer'; 
+import { useNavigate } from 'react-router-dom';
+import LessonControlButtons from '../Modules/LessonControlButtons';
+import { MdOutlineAssignment } from 'react-icons/md';
+import { GoTriangleDown } from "react-icons/go";
+import { RootState } from '../../../Kanbas/store';
+
 
 export default function Assignments() {
-  const { cid } = useParams();
-  const assignments = db.assignments;
 
-  console.log('courseId:', cid);
-  const courseAssignments = assignments.filter(assignment => assignment.course === cid);
+    const { cid } = useParams();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-  console.log('courseId:', cid);
-  console.log('All assignments:', assignments);
-  console.log('Filtered assignments:', courseAssignments);
+    const assignments = useSelector((state: RootState) => state.assignmentsReducer.assignments);
+    
 
-  return (
-    <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <AssignmentSearchControls />
-        <AssignmentsControls />
-      </div>
-      <div className="d-flex justify-content-between align-items-center mb-3 bg-light p-4 rounded">
-        <h4 className="mb-0">
-          <BsGripVertical className="me-2" />
-          ASSIGNMENTS
-        </h4>
-        <TitleControlButtons />
-      </div>
-      {courseAssignments.length === 0 ? (
-        <p>No assignments found for this course.</p>
-      ) : (
-        <ul className="list-group">
-          {courseAssignments.map(assignment => (
-            <li key={assignment._id} className="list-group-item border-0 border-start border-success border-4 ps-0 mb-3">
-              <div className="d-flex align-items-center">
-                <BsGripVertical className="me-2" />
-                <FaRegFileAlt className="me-2 text-success" />
-                <div className="flex-grow-1">
-                  <h6 className="mb-0">
-                    <Link 
-                      className="wd-assignment-link"
-                      to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
-                    >
-                      {assignment.title}
-                    </Link>
-                  </h6>
-                  <small>
-                    <span className="text-danger">Multiple Modules</span>
-                    <span className="text-muted"> | Due Date | -/100 pts</span>
-                  </small>
-                </div>
-                <div>
-                  <FaCheckCircle className="text-success me-2" />
-                  <FaEllipsisV />
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+    const courseAssignments = assignments.filter((assignment: any) => assignment.course === cid);
+
+    const handleDelete = (assignmentId: string) => {
+        const confirmed = window.confirm("Are you sure you want to delete this assignment?");
+        if (confirmed) {
+            dispatch(deleteAssignment(assignmentId));
+        }
+    };
+
+    const handleAddAssignment = () => {
+        // navigate(`/Kanbas/Courses/${cid}/Assignments/new`);
+        console.log('Attempting to navigate to:', `/Kanbas/Courses/${cid}/Assignments/Editor`);
+        navigate(`/Kanbas/Courses/${cid}/Assignments/Editor`);
+    };
+
+    const handleEditAssignment = (assignmentId: string) => {
+        navigate(`/Kanbas/Courses/${cid}/Assignments/Editor/${assignmentId}`);
+    };
+
+    return (
+        <div id="wd-search-assignment">
+            <AssignmentsControls />
+            <br /><br /><br /><br />
+            <ul id="wd-assignment" className="list-group rounded-0">
+                <li className="wd-assignment list-group-item p-0 mb-5 fs-5 border-gray">
+                    <div className="wd-title p-3 ps-2 bg-secondary">
+                        <BsGripVertical className="me-2 fs-3" />
+                        <GoTriangleDown className="me-2 fs-3" />
+                        ASSIGNMENTS 40% of total
+                        <AssignmentSearchControls/>
+                        {/* <button 
+                            className="btn btn-danger float-end" 
+                            onClick={handleAddAssignment}
+                        >
+                            + Assignment
+                        </button> */}
+                    </div>
+                    <div>
+                        {courseAssignments.map((assignment: any) => (
+                            <ul key={assignment._id} className={`wd-assignment list-group rounded-0`}>
+                                <li className={`wd-assignment list-group-item p-3 ps-1 d-flex align-items-start`}>
+                                    <div className="me-2 d-flex flex-column align-items-center">
+                                        <BsGripVertical className="fs-3" />
+                                    </div>
+                                    <div className="me-2 d-flex flex-column align-items-center">
+                                        <MdOutlineAssignment className="fs-3" />
+                                    </div>
+                                    <div className="flex-grow-1">
+                                        <div className="d-flex align-items-center">
+                                            <Link
+                                                className="wd-assignment-link"
+                                                onClick={() => handleEditAssignment(assignment._id)}
+                                                to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}>
+                                                <span className="fw-bold">{assignment.title}</span>
+                                            </Link>
+                                        </div>
+                                        <div className="wd-content-item mt-2">
+                                            <span style={{ color: '#8B0000' }}>Multiple Modules</span> | <b>Not available until</b> {assignment.availableFrom} |
+                                            <b> Due</b> {assignment.dueDate} | {assignment.points}pts
+                                        </div>
+                                    </div>
+                                    <div className="float-end">
+                                        <FaTrash className="text-danger me-2 mb-1" onClick={() => handleDelete(assignment._id)} />
+                                        <LessonControlButtons />
+                                    </div>
+                                </li>
+                            </ul>
+                        ))}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    );
 }
