@@ -1,12 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { EnrollmentState } from "./types";
 
-interface Enrollment {
-  userId: string;
-  courseId: string;
-}
-
-const initialState = {
-  enrollments: [] as Enrollment[]
+const initialState: EnrollmentState = {
+  enrollments: []
 };
 
 const enrollmentsSlice = createSlice({
@@ -14,16 +10,22 @@ const enrollmentsSlice = createSlice({
   initialState,
   reducers: {
     enroll: (state, action) => {
-      state.enrollments.push({
-        userId: action.payload.userId,
-        courseId: action.payload.courseId,
-      });
+      // Check if enrollment already exists to prevent duplicates
+      const exists = state.enrollments.some(
+        e => e.userId === action.payload.userId && e.courseId === action.payload.courseId
+      );
+      if (!exists) {
+        state.enrollments.push({
+          userId: action.payload.userId,
+          courseId: action.payload.courseId,
+        });
+      }
     },
     unenroll: (state, action) => {
       state.enrollments = state.enrollments.filter(
         e => !(e.userId === action.payload.userId && e.courseId === action.payload.courseId)
       );
-    },
+    }
   }
 });
 
