@@ -1,13 +1,17 @@
-import React from 'react';
-import { FaPlus } from 'react-icons/fa';
+import { IoEllipsisVertical } from "react-icons/io5";
+import { BsPlusLg } from "react-icons/bs";
 
-export default function TitleControlButtons() {
+export default function AssignmentControlButtons() {
   return (
-    <div className="float-end">
-      <span className="me-2">40% of Total</span>
-      <button className="btn btn-outline-secondary btn-sm">
-        <FaPlus />
-      </button>
+    <div>
+      <span
+        className="border border-black fs-6 p-2 text-black me-2"
+        style={{ borderRadius: "50px" }}
+      >
+        40% of Total
+      </span>
+      <BsPlusLg />
+      <IoEllipsisVertical className="fs-4" />
     </div>
   );
 }
